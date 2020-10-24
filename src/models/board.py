@@ -9,8 +9,6 @@ from models.square import Square
 
 class Board:
     def __init__(self):
-        # create empty 8x8 matrix to hold the board information
-        self.position = [[None] * 8 for _ in range(8)]
         # holds information of all pieces on the board an their locations
         self.pieces = []
 
