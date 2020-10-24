@@ -17,6 +17,10 @@ class Board:
         self.screen_width = self.screen.get_width()
         self.screen_height = self.screen.get_height()
 
+        self.board_offset_x = (self.screen_width - 8 * Tile.TILE_SIZE) // 2
+        self.board_offset_y = (self.screen_height - 8 * Tile.TILE_SIZE) // 2
+
+        # Create board tiles
         self.tiles = []
         for file in range(8):
             for rank in range(8):
@@ -27,9 +31,7 @@ class Board:
         self.screen.fill(WHITE)
         
         for tile in self.tiles:
-            tile.render(self.screen)
+            tile.render(self.screen, (self.board_offset_x, self.board_offset_y))
 
         message_display(surface=self.screen, text="Test", pos=(self.screen_width / 2, self.screen_height / 3),
             font='comicsansms', size=40)
-
-
