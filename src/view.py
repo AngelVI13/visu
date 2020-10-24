@@ -5,7 +5,7 @@ from event import *
 from state import States
 from event_manager import Listener
 from views.menu import Menu
-from views.board import Board
+from views.play.board import Board
 
 
 class View(Listener):
@@ -86,4 +86,4 @@ class View(Listener):
 
         # Initialize views
         self.menu_view = Menu(self.screen)
-        self.board_view = Board(self.screen, object()) # todo fix this
+        self.board_view = Board(self.screen, self.game_engine.board)

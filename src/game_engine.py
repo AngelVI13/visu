@@ -7,6 +7,7 @@ import pygame
 from event import *
 from state import StateMachine, States
 from event_manager import Listener, EventManager
+from models.board import Board
 
 
 class GameEngine(Listener):
@@ -19,6 +20,7 @@ class GameEngine(Listener):
 
         self.running = False
         self.state = StateMachine()
+        self.board = Board()
 
     def _pop_state(self):
         """Remove state from state machine. If no states
