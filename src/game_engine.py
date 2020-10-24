@@ -8,6 +8,8 @@ from event import *
 from state import StateMachine, States
 from event_manager import Listener, EventManager
 from models.board import Board
+from models.pieces import Bishop, Knight, Rook, Queen, King
+from models.square import Square
 
 
 class GameEngine(Listener):
@@ -21,6 +23,18 @@ class GameEngine(Listener):
         self.running = False
         self.state = StateMachine()
         self.board = Board()
+        self.board.pieces.append(Bishop(Square.from_notation("a1"), self.board))
+        self.board.pieces.append(Knight(Square.from_notation("b1"), self.board))
+        self.board.pieces.append(Rook(Square.from_notation("c1"), self.board))
+        self.board.pieces.append(Queen(Square.from_notation("d1"), self.board))
+        self.board.pieces.append(King(Square.from_notation("e1"), self.board))
+
+        self.board.pieces.append(Bishop(Square.from_notation("a2"), self.board))
+        self.board.pieces.append(Knight(Square.from_notation("b2"), self.board))
+        self.board.pieces.append(Rook(Square.from_notation("c2"), self.board))
+        self.board.pieces.append(Queen(Square.from_notation("d2"), self.board))
+        self.board.pieces.append(King(Square.from_notation("e2"), self.board))
+
 
     def _pop_state(self):
         """Remove state from state machine. If no states

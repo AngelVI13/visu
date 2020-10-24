@@ -5,7 +5,7 @@ from event import *
 from state import States
 from event_manager import Listener
 from views.menu import Menu
-from views.play.board import Board
+from views.play.game import Game
 
 
 class View(Listener):
@@ -33,7 +33,7 @@ class View(Listener):
 
         # Views
         self.menu_view: Optional[Menu] = None
-        self.board_view: Optional[Board] = None
+        self.game_view: Optional[Game] = None
 
     def notify(self, event: Event):
         """Receive events posted on the message queue."""
@@ -73,7 +73,7 @@ class View(Listener):
         self.screen.blit(text, (0, 0))
 
     def render_play(self):
-        self.board_view.render()
+        self.game_view.render()
         
     def initialize(self):
         pygame.init()
@@ -86,4 +86,4 @@ class View(Listener):
 
         # Initialize views
         self.menu_view = Menu(self.screen)
-        self.board_view = Board(self.screen, self.game_engine.board)
+        self.game_view = Game(self.screen, self.game_engine.board)

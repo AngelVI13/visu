@@ -1,6 +1,6 @@
 import time
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 from operator import xor
 from functools import partial, reduce
 from itertools import cycle, chain
@@ -31,3 +31,11 @@ class Board:
                 return piece
 
         raise ValueError(f"No piece can reach square: {square}")
+
+    def get_piece_at_square(self, square: Square) -> Optional[Piece]:
+        """Get piece object at the give square. If no piece is on
+        this suqare return None"""
+        for piece in self.pieces:
+            if square == piece.square:
+                return piece
+        return None
