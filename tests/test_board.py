@@ -27,3 +27,22 @@ def test_get_singular_squares():
     assert Square.from_notation("a3") in squares
     assert Square.from_notation("d2") in squares
 
+
+def test_get_piece_that_reaches_square():
+    board = Board()
+
+    bishop = Bishop(Square.from_notation("a1"), board)
+    knight = Knight(Square.from_notation("b1"), board)
+
+    board.pieces.append(bishop)
+    board.pieces.append(knight)
+
+    square = Square.from_notation("a3")
+    assert isinstance(board.get_piece_that_reaches_square(square), Knight)
+    
+    square = Square.from_notation("b2")
+    assert isinstance(board.get_piece_that_reaches_square(square), Bishop)
+
+    with raises(ValueError):
+        square = Square.from_notation("e2")
+        _ = board.get_piece_that_reaches_square(square)

@@ -5,6 +5,7 @@ from operator import xor
 from functools import partial, reduce
 from itertools import cycle, chain
 from models.square import Square
+from models.pieces import Piece
 
 
 class Board:
@@ -22,3 +23,11 @@ class Board:
         all_moves = [set(piece.get_moves()) for piece in self.pieces]
         # set(a) ^ set(b) = non-intersecting elements from a and b
         return list(reduce(xor, all_moves))
+
+    def get_piece_that_reaches_square(self, square: Square) -> Piece:
+        """Get piece object that can reach the given square."""
+        for piece in self.pieces:
+            if square in piece.get_moves():
+                return piece
+
+        raise ValueError(f"No piece can reach square: {square}")
