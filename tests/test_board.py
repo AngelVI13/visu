@@ -14,8 +14,8 @@ def test_get_singular_squares():
     bishop = Bishop(Square.from_notation("a1"), board)
     knight = Knight(Square.from_notation("b1"), board)
 
-    board.pieces.append(bishop)
-    board.pieces.append(knight)
+    board.add_piece(bishop)
+    board.add_piece(knight)
 
     squares = board.get_singular_squares()
     assert isinstance(squares, list)
@@ -34,8 +34,8 @@ def test_get_piece_that_reaches_square():
     bishop = Bishop(Square.from_notation("a1"), board)
     knight = Knight(Square.from_notation("b1"), board)
 
-    board.pieces.append(bishop)
-    board.pieces.append(knight)
+    board.add_piece(bishop)
+    board.add_piece(knight)
 
     square = Square.from_notation("a3")
     assert isinstance(board.get_piece_that_reaches_square(square), Knight)

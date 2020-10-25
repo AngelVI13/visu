@@ -72,3 +72,22 @@ def test_square_from_notation():
     
     with raises(ValueError):
         _ = Square.from_notation("aa")
+
+
+def test_square_from_index():
+    square = Square.from_index(63)
+    assert isinstance(square, Square)
+    assert square == Square.from_notation("h8")
+
+    square = Square.from_index(5)
+    assert isinstance(square, Square)
+    assert square == Square.from_notation("f1")
+
+    with raises(TypeError):
+        _ = Square.from_index("5")
+
+    with raises(ValueError):
+        _ = Square.from_index(64)
+    
+    with raises(ValueError):
+        _ = Square.from_index(-1)

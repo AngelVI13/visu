@@ -86,4 +86,4 @@ class View(Listener):
 
         # Initialize views
         self.menu_view = Menu(self.screen)
-        self.game_view = Game(self.screen, self.game_engine.board)
+        self.game_view = Game(self.screen, self.game_engine.game_state)

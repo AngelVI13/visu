@@ -32,6 +32,17 @@ class Square:
         return f"{self.FILES[self.file]}{self.RANKS[self.rank]}"
 
     @classmethod
+    def from_index(cls, index: int):
+        if not isinstance(index, int):
+            raise TypeError(f"Index should by of type int. Got: {type(index)}")
+
+        if index not in range(64):
+            raise ValueError(f"Index should be in range [0,63] inclusive. Got: {index}")
+
+        rank, file = divmod(index, 8)
+        return cls(file, rank)
+
+    @classmethod
     def from_notation(cls, notation: str):
         if not isinstance(notation, str):
             raise TypeError(f"Notation should be of type str. Got: {type(notation)}")

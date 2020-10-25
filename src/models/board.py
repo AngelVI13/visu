@@ -13,6 +13,17 @@ class Board:
         # holds information of all pieces on the board an their locations
         self.pieces = []
 
+    def reset(self):
+        """Reset board."""
+        self.pieces = []
+
+    def add_piece(self, piece: Piece):
+        """Add piece to board."""
+        if not isinstance(piece, Piece):
+            raise TypeError(f"Piece should be of type that derives from `Piece`. Got: {type(piece)}")
+
+        self.pieces.append(piece)
+
     @property
     def occupied(self) -> List[Square]:
         """Get list of occupied squares."""

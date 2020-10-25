@@ -36,7 +36,7 @@ def test_bishop_moves():
     bishop = Bishop(Square.from_notation("e4"), board)
     blocking_bishop = Bishop(Square.from_notation("f5"), board)
     
-    board.pieces.append(blocking_bishop)
+    board.add_piece(blocking_bishop)
 
     moves = bishop.get_moves()
     assert len(moves) == 10
@@ -74,7 +74,7 @@ def test_rook_moves():
     rook = Rook(Square.from_notation("d4"), board)
     blocking_bishop = Bishop(Square.from_notation("f4"), board)
     
-    board.pieces.append(blocking_bishop)
+    board.add_piece(blocking_bishop)
 
     moves = rook.get_moves()
     assert len(moves) == 11
@@ -119,8 +119,8 @@ def test_queen_moves():
     blocking_bishop1 = Bishop(Square.from_notation("c4"), board)
     blocking_bishop2 = Bishop(Square.from_notation("c3"), board)
     
-    board.pieces.append(blocking_bishop1)
-    board.pieces.append(blocking_bishop2)
+    board.add_piece(blocking_bishop1)
+    board.add_piece(blocking_bishop2)
 
     moves = queen.get_moves()
     assert len(moves) == 21
@@ -169,7 +169,7 @@ def test_knight_moves():
     knight = Knight(Square.from_notation("d4"), board)
     blocking_bishop = Bishop(Square.from_notation("c2"), board)
     
-    board.pieces.append(blocking_bishop)
+    board.add_piece(blocking_bishop)
 
     moves = knight.get_moves()
     assert len(moves) == 7
@@ -217,7 +217,7 @@ def test_king_moves():
     king = King(Square.from_notation("d4"), board)
     blocking_bishop = Bishop(Square.from_notation("c5"), board)
     
-    board.pieces.append(blocking_bishop)
+    board.add_piece(blocking_bishop)
 
     moves = king.get_moves()
     assert len(moves) == 7
