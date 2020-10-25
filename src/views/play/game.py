@@ -24,18 +24,19 @@ class Game:
             rect=pygame.Rect(self.screen_width / 4, self.screen_height / 4, self.screen_width / 2, self.screen_height / 2),
             color=WHITE_1, 
             opacity=220, 
+            font='comicsansms',
         )
         self.overlay.add_element(
-            ElementType.TEXT, 
+            ElementType.TEXT,
+            proportion=0.25, 
             text="Visualization Training",
-            font='comicsansms',
             size=30,
             color=BLACK
         )
         self.overlay.add_element(
             ElementType.TEXT,
+            proportion=0.75,
             text="Long Long Long Long Description",
-            font='comicsansms',
             size=20,
             color=BLACK
         )
