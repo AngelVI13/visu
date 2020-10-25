@@ -7,7 +7,7 @@ from settings.display import DISPLAY_SCALING
 class Button:
 	text_font = None
 
-	def __init__(self, x, y, w, h, msg, ic, ac, action):
+	def __init__(self, x, y, w, h, msg, ic, ac, action, font_color=pygame.Color("black")):
 		self.x = x
 		self.y = y
 		self.w = w
@@ -16,13 +16,14 @@ class Button:
 		self.ic = ic # inactive color
 		self.ac = ac # active color
 		self.action = action # action type i.e. Play, Quit etc.
+		self.font_color = font_color
 
 		# initialize font if not done already
 		if self.text_font is None:
 			self.text_font = pygame.font.SysFont("comicsansms", 20 * DISPLAY_SCALING)
 
 		# Text object (Rect + Surf)
-		self.text_surf, self.text_rect = get_text_objects(self.msg, self.text_font)
+		self.text_surf, self.text_rect = get_text_objects(self.msg, self.text_font, color=self.font_color)
 		self.text_rect.center = self.x + (self.w / 2), self.y + (self.h / 2)
 
 		self.box = pygame.Rect(self.x, self.y, self.w, self.h)

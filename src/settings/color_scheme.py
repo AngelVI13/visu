@@ -1,5 +1,7 @@
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+WHITE_1 = (232, 232, 232)
+GRAY = (192, 192, 192)
 
 RED = (0xff, 0x10, 0x53)
 RED_HIGHLIGHT = (0xd1, 0x0e, 0x44)

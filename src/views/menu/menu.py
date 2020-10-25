@@ -4,7 +4,7 @@ from enum import Enum, auto
 from settings.display import DISPLAY_SCALING
 from settings.color_scheme import PURPLE, PURPLE_HIGHLIGHT
 from views.menu.background import Background
-from views.helpers import message_display
+from views.helpers import create_message
 from views.common import Button
 
 
@@ -68,8 +68,11 @@ class Menu:
 
 		self.background.update()
 
-		message_display(surface=self.screen, text=self.HEADING, pos=(self.screen.get_width() / 2, self.screen.get_height() / 3),
-						font='comicsansms', size=40)
+		text_surf, text_rect = create_message(
+			text=self.HEADING, pos=(self.screen.get_width() / 2, self.screen.get_height() / 3),
+			font='comicsansms', size=40
+		)
+		self.screen.blit(text_surf, text_rect)
 
 		# only ask for mouse status once and not for every button
 		mouse = pygame.mouse.get_pos()
