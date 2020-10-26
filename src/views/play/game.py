@@ -18,24 +18,31 @@ class Game:
         self.screen_height = self.screen.get_height()
 
         self.board_view = Board(self.screen, self.game_model)
-        
+
         self.overlay = Overlay(
-            self.screen, 
+            self.screen,
             rect=pygame.Rect(self.screen_width / 4, self.screen_height / 4, self.screen_width / 2, self.screen_height / 2),
-            color=WHITE_1, 
-            opacity=220, 
+            color=WHITE_1,
+            opacity=220,
             font='comicsansms',
         )
         self.overlay.add_element(
             ElementType.TEXT,
-            proportion=0.25, 
+            proportion=0.25,
             text="Visualization Training",
-            size=30,
+            size=28,
             color=BLACK
         )
         self.overlay.add_element(
             ElementType.TEXT,
-            proportion=0.75,
+            proportion=0.50,
+            text="Long Long Long Long Description",
+            size=20,
+            color=BLACK
+        )
+        self.overlay.add_element(
+            ElementType.BUTTON,
+            proportion=0.25,
             text="Long Long Long Long Description",
             size=20,
             color=BLACK
@@ -43,7 +50,7 @@ class Game:
 
     def render(self):
         self.screen.fill(WHITE)
-        
+
         self.board_view.render()
         self.overlay.render()
 
