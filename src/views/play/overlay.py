@@ -2,27 +2,19 @@ import pygame
 from abc import ABC, abstractmethod
 from enum import Enum, auto
 from typing import Tuple, NamedTuple, Dict, Any, Callable
-from functools import singledispatch, update_wrapper, singledispatchmethod
 
 from models.game_state import GameState
 from views.play.defines import *
 from views.common.button import Button
 from views.play.board import Board
+from views.helpers import get_text_objects
 from settings.color_scheme import *
 from settings.display import DISPLAY_SCALING
 
-# todo the singledispatchmethod only works with simple types - investigate why
 
-# todo this is a temporary fix, an singledispatchmethod is present in python 3.8
-# def methdispatch(func):
-#     dispatcher = singledispatch(func)
-#     def wrapper(*args, **kw):
-#         print(args[1].__class__)
-#         breakpoint()
-#         return dispatcher.dispatch(args[1].__class__)(*args, **kw)
-#     wrapper.register = dispatcher.register
-#     update_wrapper(wrapper, func)
-#     return wrapper
+class ElementTypes(Enum):
+    TEXT = auto()
+    BUTTON = auto()
 
 
 class BaseElement(ABC):
@@ -47,7 +39,7 @@ class TextElement(BaseElement):
         x, y = pos
         for line in words:
             for word in line:
-                word_surface = font.render(word, True, self.color)
+                word_surface = self.font.render(word, True, self.color)
                 word_width, word_height = word_surface.get_size()
                 if x + word_width >= max_width:
                     x, *_ = pos  # Reset the x.
@@ -118,24 +110,20 @@ class Overlay:
         self.padding = padding
         self.font = font
 
-    @singledispatchmethod
-    def add_element(self, type, proportion: float, **options):
-        # print(type, proportion)
-        # raise NotImplementedError
-        pass
+    def add_element(self, type: ElementTypes, proportion: float, **kwargs):
+        if type == ElementTypes.TEXT:
+            element = self._create_text_element(**kwargs)
+        elif type == ElementTypes.BUTTON:
+            element = self._create_button_element(**kwargs)
 
-    @add_element.register(TextElement)
-    def _(self, type: TextElement, proportion: float, text: str, size: int, color: pygame.Color):
-        print("hello")
+        self.elements[element] = proportion
+
+    def _create_text_element(self, text: str, size: int, color: pygame.Color):
         font_object = pygame.font.SysFont(self.font, size * DISPLAY_SCALING)
+        return TextElement(text, font_object, color)
 
-        self.elements[TextElement(text, font_object, color)] = proportion
-
-    @add_element.register(ButtonElement)
-    def _(
+    def _create_button_element(
             self,
-            type: ButtonElement,
-            proportion: float,
             text: str,
             color: pygame.Color,
             accent_color: pygame.Color,
@@ -143,12 +131,8 @@ class Overlay:
             font_size: int,
             font_color: pygame.Color,
         ):
-        print("byes")
         font_object = pygame.font.SysFont(self.font, font_size * DISPLAY_SCALING)
-
-        button = ButtonElement(text, color, accent_color, action, font_object, font_color)
-
-        self.elements[button] = proportion
+        return ButtonElement(text, color, accent_color, action, font_object, font_color)
 
     def render(self):
         # compute the size of the overlay based on the text size
@@ -160,7 +144,6 @@ class Overlay:
         offset_x, offset_y = self.rect.topleft
         offset_x += self.padding  # x padding is applied just once
 
-        print(list(self.elements.items()))
         # todo add check that propotions add to 1
         for element, proportion in self.elements.items():
             # apply vertical padding between every element
@@ -177,7 +160,7 @@ class Overlay:
             if isinstance(element, TextElement):
                 # position relative to the new surface
                 surface = element.blit(surface, pos=(0, 0))
-            elif isinstance(element == ButtonElement):
+            elif isinstance(element, ButtonElement):
                 surface = element.blit(
                     surface,
                     pygame.Rect(0, 0, surface.get_width(), surface.get_height()),
