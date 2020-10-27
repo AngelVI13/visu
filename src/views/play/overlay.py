@@ -1,9 +1,8 @@
 import pygame
-from weakref import WeakKeyDictionary
 from abc import ABC, abstractmethod
 from enum import Enum, auto
 from typing import Tuple, NamedTuple, Dict, Any, Callable
-from functools import singledispatch, update_wrapper
+from functools import singledispatch, update_wrapper, singledispatchmethod
 
 from models.game_state import GameState
 from views.play.defines import *
@@ -12,18 +11,18 @@ from views.play.board import Board
 from settings.color_scheme import *
 from settings.display import DISPLAY_SCALING
 
-# todo add special types (with typing) and try to dispatch on them
+# todo the singledispatchmethod only works with simple types - investigate why
 
 # todo this is a temporary fix, an singledispatchmethod is present in python 3.8
-def methdispatch(func):
-    dispatcher = singledispatch(func)
-    def wrapper(*args, **kw):
-        print(args[1].__class__)
-        breakpoint()
-        return dispatcher.dispatch(args[1].__class__)(*args, **kw)
-    wrapper.register = dispatcher.register
-    update_wrapper(wrapper, func)
-    return wrapper
+# def methdispatch(func):
+#     dispatcher = singledispatch(func)
+#     def wrapper(*args, **kw):
+#         print(args[1].__class__)
+#         breakpoint()
+#         return dispatcher.dispatch(args[1].__class__)(*args, **kw)
+#     wrapper.register = dispatcher.register
+#     update_wrapper(wrapper, func)
+#     return wrapper
 
 
 class BaseElement(ABC):
@@ -115,11 +114,11 @@ class Overlay:
         self.rect = rect
         self.color = color
         self.opacity = opacity
-        self.elements = WeakKeyDictionary()
+        self.elements = {}
         self.padding = padding
         self.font = font
 
-    @methdispatch
+    @singledispatchmethod
     def add_element(self, type, proportion: float, **options):
         # print(type, proportion)
         # raise NotImplementedError
@@ -127,6 +126,7 @@ class Overlay:
 
     @add_element.register(TextElement)
     def _(self, type: TextElement, proportion: float, text: str, size: int, color: pygame.Color):
+        print("hello")
         font_object = pygame.font.SysFont(self.font, size * DISPLAY_SCALING)
 
         self.elements[TextElement(text, font_object, color)] = proportion
@@ -143,7 +143,7 @@ class Overlay:
             font_size: int,
             font_color: pygame.Color,
         ):
-
+        print("byes")
         font_object = pygame.font.SysFont(self.font, font_size * DISPLAY_SCALING)
 
         button = ButtonElement(text, color, accent_color, action, font_object, font_color)
@@ -160,6 +160,7 @@ class Overlay:
         offset_x, offset_y = self.rect.topleft
         offset_x += self.padding  # x padding is applied just once
 
+        print(list(self.elements.items()))
         # todo add check that propotions add to 1
         for element, proportion in self.elements.items():
             # apply vertical padding between every element
