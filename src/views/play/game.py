@@ -4,7 +4,7 @@ from models.game_state import GameState
 from views.play.defines import *
 from views.helpers import create_message
 from views.play.board import Board
-from views.play.overlay import Overlay, Element, ElementType
+from views.play.overlay import Overlay, ButtonElement, TextElement
 from settings.color_scheme import *
 from settings.display import DISPLAY_SCALING
 
@@ -27,25 +27,29 @@ class Game:
             font='comicsansms',
         )
         self.overlay.add_element(
-            ElementType.TEXT,
+            TextElement,
             proportion=0.25,
             text="Visualization Training",
             size=28,
             color=BLACK
         )
         self.overlay.add_element(
-            ElementType.TEXT,
+            TextElement,
             proportion=0.50,
             text="Long Long Long Long Description",
             size=20,
             color=BLACK
         )
+        # todo add button font size option
         self.overlay.add_element(
-            ElementType.BUTTON,
+            ButtonElement,
             proportion=0.25,
-            text="Long Long Long Long Description",
-            size=20,
-            color=BLACK
+            text="Start",
+            color=PURPLE,
+            accent_color=PURPLE_HIGHLIGHT,
+            action=None,
+            font_size=28,
+            font_color=BLACK,
         )
 
     def render(self):

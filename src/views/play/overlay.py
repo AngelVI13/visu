@@ -1,26 +1,103 @@
 import pygame
+from weakref import WeakKeyDictionary
+from abc import ABC, abstractmethod
+from enum import Enum, auto
+from typing import Tuple, NamedTuple, Dict, Any, Callable
+from functools import singledispatch, update_wrapper
 
 from models.game_state import GameState
 from views.play.defines import *
-from views.helpers import create_message
+from views.common.button import Button
 from views.play.board import Board
 from settings.color_scheme import *
 from settings.display import DISPLAY_SCALING
-from typing import Tuple, NamedTuple, Dict, Any
-from enum import Enum, auto
+
+# todo add special types (with typing) and try to dispatch on them
+
+# todo this is a temporary fix, an singledispatchmethod is present in python 3.8
+def methdispatch(func):
+    dispatcher = singledispatch(func)
+    def wrapper(*args, **kw):
+        print(args[1].__class__)
+        breakpoint()
+        return dispatcher.dispatch(args[1].__class__)(*args, **kw)
+    wrapper.register = dispatcher.register
+    update_wrapper(wrapper, func)
+    return wrapper
 
 
-class ElementType(Enum):
-    TEXT = auto()
-    BUTTON = auto()
+class BaseElement(ABC):
+    @abstractmethod
+    def blit(self, surface, *args, **kwargs) -> pygame.Surface:
+        pass
 
 
-class Element(NamedTuple):
-    type: ElementType
-    proportion: float
-    options: Dict[str, Any]
+class TextElement(BaseElement):
+    def __init__(self, text: str, font: pygame.font.Font, color: pygame.Color):
+        self.text = text
+        self.font = font
+        self.color = color
+
+    def blit(self, surface, pos) -> pygame.Surface:
+        """Method that blits multiline text on a provided surface"""
+
+        # 2D array where each row is a list of words.
+        words = [word.split(' ') for word in self.text.splitlines()]
+        space_width, *_ = self.font.size(' ')  # The width of a space.
+        max_width, max_height = surface.get_size()
+        x, y = pos
+        for line in words:
+            for word in line:
+                word_surface = font.render(word, True, self.color)
+                word_width, word_height = word_surface.get_size()
+                if x + word_width >= max_width:
+                    x, *_ = pos  # Reset the x.
+                    y += word_height  # Start on new row.
+
+                surface.blit(word_surface, (x, y))
+                x += word_width + space_width
+            x, *_ = pos  # Reset the x.
+            y += word_height  # Start on new row.
+        return surface
 
 
+class ButtonElement(BaseElement):
+    def __init__(
+        self,
+        text: str,
+        color: pygame.Color,
+        accent_color: pygame.Color,
+        action: Callable,
+        font: pygame.font.Font,
+        font_color: pygame.Color,
+    ):
+        self.text = text
+        self.color = color
+        self.accent_color = accent_color
+        self.action = action
+        self.font = font
+        self.font_color = font_color
+
+        # create text objects
+        self.text_surf, self.text_rect = get_text_objects(
+            self.text, self.font, color=self.font_color
+        )
+
+    def blit(self, surface: pygame.Surface, rect: pygame.Rect, mouse: Tuple[int, int]) -> pygame.Surface:
+        x, y = rect.topleft
+        w, h = rect.size
+        self.text_rect.center = x + (w / 2), y + (h / 2)
+
+        if x + w > mouse[0] > x and y + h > mouse[1] > y:
+            pygame.draw.rect(surface, self.accent_color, rect)
+        else:
+            pygame.draw.rect(surface, self.color, rect)
+
+        surface.blit(self.text_surf, self.text_rect)
+        return surface
+
+
+# todo add support for horizontal elements
 class Overlay:
     def __init__(
             self,
@@ -38,35 +115,40 @@ class Overlay:
         self.rect = rect
         self.color = color
         self.opacity = opacity
-        self.elements = []
+        self.elements = WeakKeyDictionary()
         self.padding = padding
         self.font = font
 
-    def add_element(self, type: ElementType, proportion: float, **options):
-        if type == ElementType.TEXT:
-            self.elements.append(Element(type, proportion, options))
+    @methdispatch
+    def add_element(self, type, proportion: float, **options):
+        # print(type, proportion)
+        # raise NotImplementedError
+        pass
 
-    def blit_text(self, surface, text, pos, font, color=pygame.Color('black')):
-        """Method that blits multiline text on a provided surface"""
+    @add_element.register(TextElement)
+    def _(self, type: TextElement, proportion: float, text: str, size: int, color: pygame.Color):
+        font_object = pygame.font.SysFont(self.font, size * DISPLAY_SCALING)
 
-        # 2D array where each row is a list of words.
-        words = [word.split(' ') for word in text.splitlines()]
-        space_width, *_ = font.size(' ')  # The width of a space.
-        max_width, max_height = surface.get_size()
-        x, y = pos
-        for line in words:
-            for word in line:
-                word_surface = font.render(word, True, color)
-                word_width, word_height = word_surface.get_size()
-                if x + word_width >= max_width:
-                    x, *_ = pos  # Reset the x.
-                    y += word_height  # Start on new row.
+        self.elements[TextElement(text, font_object, color)] = proportion
 
-                surface.blit(word_surface, (x, y))
-                x += word_width + space_width
-            x, *_ = pos  # Reset the x.
-            y += word_height  # Start on new row.
-        return surface
+    @add_element.register(ButtonElement)
+    def _(
+            self,
+            type: ButtonElement,
+            proportion: float,
+            text: str,
+            color: pygame.Color,
+            accent_color: pygame.Color,
+            action: Callable,
+            font_size: int,
+            font_color: pygame.Color,
+        ):
+
+        font_object = pygame.font.SysFont(self.font, font_size * DISPLAY_SCALING)
+
+        button = ButtonElement(text, color, accent_color, action, font_object, font_color)
+
+        self.elements[button] = proportion
 
     def render(self):
         # compute the size of the overlay based on the text size
@@ -78,28 +160,29 @@ class Overlay:
         offset_x, offset_y = self.rect.topleft
         offset_x += self.padding  # x padding is applied just once
 
-        for element in self.elements:
+        # todo add check that propotions add to 1
+        for element, proportion in self.elements.items():
             # apply vertical padding between every element
             offset_y += self.padding
 
             # create element surface
             surface = pygame.Surface(
-                (self.rect.w - self.padding, (self.rect.h * element.proportion) - self.padding),
+                (self.rect.w - 2*self.padding, # width
+                    (self.rect.h * proportion) - 1.5*self.padding), # height
                 pygame.HWSURFACE
             )
             surface.fill((*self.color, 255))
 
-            if element.type == ElementType.TEXT:
-                surface = self.blit_text(
+            if isinstance(element, TextElement):
+                # position relative to the new surface
+                surface = element.blit(surface, pos=(0, 0))
+            elif isinstance(element == ButtonElement):
+                surface = element.blit(
                     surface,
-                    text=element.options["text"],
-                    pos=(0, 0),  # position relative to the new surface
-                    font=pygame.font.SysFont(self.font, element.options["size"] * DISPLAY_SCALING),
-                    color=element.options["color"],
+                    pygame.Rect(0, 0, surface.get_width(), surface.get_height()),
+                    mouse=[0, 0]  # todo fix this
                 )
-                self.screen.blit(surface, (offset_x, offset_y))
-                # update height for next element
-                offset_y += surface.get_height()
 
-            elif element.type == ElementType.BUTTON:
-                pass
+            # blit element surface on the screen & update height for next element
+            self.screen.blit(surface, (offset_x, offset_y))
+            offset_y += surface.get_height()

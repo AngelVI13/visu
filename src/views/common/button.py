@@ -1,9 +1,9 @@
 import pygame
 
-from views.helpers import get_text_objects 
+from views.helpers import get_text_objects
 from settings.display import DISPLAY_SCALING
 
-
+# todo consider reworking this 9or replace with ButtonElement)
 class Button:
 	text_font = None
 
