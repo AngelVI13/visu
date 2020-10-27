@@ -28,16 +28,21 @@ class Game:
         )
         self.overlay.add_element(
             ElementTypes.TEXT,
-            proportion=0.25,
+            proportion=0.20,
             text="Visualization Training",
             size=26,
             color=BLACK
         )
         self.overlay.add_element(
             ElementTypes.TEXT,
-            proportion=0.55,
-            text="Long Long Long Long Description",
-            size=20,
+            proportion=0.60,
+            text=(
+                "The aim of the game: Say which piece can "
+                "reach a given square. You start with 2 pieces "
+                "and get 1 more for every 10 right answers.\n\n"
+                "The catch: you cannot see where your pieces are!\n"
+            ),
+            size=16,
             color=BLACK
         )
         self.overlay.add_element(
@@ -47,7 +52,7 @@ class Game:
             color=PURPLE,
             accent_color=PURPLE_HIGHLIGHT,
             action=None,
-            font_size=28,
+            font_size=26,
             font_color=BLACK,
         )
 
