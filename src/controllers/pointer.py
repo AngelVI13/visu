@@ -43,6 +43,7 @@ class Pointer:
     def mouseup_menu(self, event):
         """Handles menu pointer events."""
 
+        # todo move this handling to the view
         # get pointer to the view.
         # depending on the state -> check what was clicked on the screen
         # change state of model
@@ -68,4 +69,4 @@ class Pointer:
 
     def mouseup_play(self, event):
         """Handles play key events"""
-        pass
+        self.event_manager.post(MouseEventClick(event.pos))

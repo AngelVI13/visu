@@ -35,3 +35,7 @@ class Controller(Listener):
             # handle mouse clicks
             elif event.type == pygame.MOUSEBUTTONUP:
                 self.pointer.handle_mouseup(event)
+
+            # handle mouse motion - used for button highlighting
+            elif event.type == pygame.MOUSEMOTION:
+                self.event_manager.post(MouseEventMove(event.pos))

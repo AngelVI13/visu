@@ -37,7 +37,7 @@ class KeyboardEvent(Event):
         return f"{self.__class__.__name__}(unicode_char='{self.char}')"
 
 
-class MouseEvent(Event):
+class MouseEventClick(Event):
     """Event emmited on mouse click"""
 
     def __init__(self, click_pos):
@@ -45,6 +45,17 @@ class MouseEvent(Event):
 
     def __repr__(self):
         return f"{self.__class__.__name__}(click_pos='{self.click_pos}')"
+
+
+class MouseEventMove(Event):
+    """Event emmited on mouse click"""
+
+    def __init__(self, pos):
+        self.pos = pos
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}(pos='{self.pos}')"
+
 
 
 class InitializeEvent(Event):

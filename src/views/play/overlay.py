@@ -134,7 +134,7 @@ class Overlay:
         font_object = pygame.font.SysFont(self.font, font_size * DISPLAY_SCALING)
         return ButtonElement(text, color, accent_color, action, font_object, font_color)
 
-    def render(self):
+    def render(self, mouse_pos: Tuple[int, int]):
         # compute the size of the overlay based on the text size
         pygame.draw.rect(
             self.screen, self.color, self.rect,
@@ -161,10 +161,14 @@ class Overlay:
                 # position relative to the new surface
                 surface = element.blit(surface, pos=(0, 0))
             elif isinstance(element, ButtonElement):
+                mouse_x, mouse_y = mouse_pos
+                mouse_x -= offset_x
+                mouse_y -= offset_y
+
                 surface = element.blit(
                     surface,
                     pygame.Rect(0, 0, surface.get_width(), surface.get_height()),
-                    mouse=[0, 0]  # todo fix this
+                    mouse=(mouse_x, mouse_y)
                 )
 
             # blit element surface on the screen & update height for next element

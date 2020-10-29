@@ -35,6 +35,10 @@ class View(Listener):
         self.menu_view: Optional[Menu] = None
         self.game_view: Optional[Game] = None
 
+        # pointer to the current active view
+        # used for sending in mouse/keyboard events
+        self.current_view = None
+
     def notify(self, event: Event):
         """Receive events posted on the message queue."""
         if isinstance(event, InitializeEvent):
@@ -43,6 +47,9 @@ class View(Listener):
         elif isinstance(event, QuitEvent):
             self.initialized = False
             pygame.quit()
+
+        elif isinstance(event, (MouseEventMove, MouseEventClick)):
+            self.current_view.register_inputs(event)
 
         elif isinstance(event, TickEvent):
             # drawing only on tick events and when initialized
@@ -64,6 +71,7 @@ class View(Listener):
 
     def render_menu(self):
         self.menu_view.render()
+        self.current_view = self.menu_view
 
     def render_help(self):
         self.screen.fill(pygame.Color("white"))
@@ -74,6 +82,7 @@ class View(Listener):
 
     def render_play(self):
         self.game_view.render()
+        self.current_view = self.game_view
         
     def initialize(self):
         pygame.init()
