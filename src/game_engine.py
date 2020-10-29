@@ -21,8 +21,7 @@ class GameEngine(Listener):
 
         self.running = False
         self.state = StateMachine()
-        self.board = Board()
-        self.game_state = GameState(self.board)
+        self.game_state = GameState()
 
     def _pop_state(self):
         """Remove state from state machine. If no states

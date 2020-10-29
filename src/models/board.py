@@ -50,3 +50,32 @@ class Board:
             if square == piece.square:
                 return piece
         return None
+
+    def __str__(self) -> str:
+        """Return a human readable board representation."""
+        board_rep = ["\nGame Board:\n\n"]
+
+        piece_locations = {piece.square.index: piece for piece in self.pieces}
+        for rank in reversed(range(8)):
+            rank_line = ["{}  ".format(rank + 1)]
+            for file in range(8):
+                sq = Square(file, rank).index
+
+                piece_str = "."
+                piece = piece_locations.get(sq)
+                piece_str = piece.abbreviation if piece else "."
+                rank_line.append(" {} ".format(piece_str))
+
+            rank_line.append('\n')
+            board_rep.append(''.join(rank_line))
+
+        board_rep.append("\n   ")
+
+        bottom_line = []
+        for file in range(8):
+            bottom_line.append(" {} ".format(chr(ord('a') + file)).upper())
+
+        board_rep.append(''.join(bottom_line))
+
+        board_rep.append("\n\n")
+        return "".join(board_rep)

@@ -37,9 +37,12 @@ class Directions:
     }
     
 
+PIECE_ABBREVIATIONS = list(iter("BRQKN"))
+
 
 class Piece(ABC):
     directions = None
+    abbreviation = None
 
     def __init__(self, square: Square, board):
         self.square = square
@@ -103,19 +106,24 @@ class NonSlidingPiece(Piece):
 
 class Bishop(SlidingPiece):
     directions = Directions.DIAGONAL
+    abbreviation = "B"
 
 
 class Rook(SlidingPiece):
     directions = Directions.ORTHOGONAL
+    abbreviation = "R"
     
 
 class Queen(SlidingPiece):
     directions = Directions.COMBINED
+    abbreviation = "Q"
 
 
 class King(NonSlidingPiece):
     directions = Directions.COMBINED
+    abbreviation = "K"
 
 
 class Knight(NonSlidingPiece):
     directions = Directions.KNIGHT
+    abbreviation = "N"

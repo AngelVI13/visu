@@ -23,13 +23,16 @@ class Square:
     @property
     def color(self) -> Color:
         # convert file & rank to 64-based index
-        index = self.rank * 8 + self.file
-        is_black = (self.COLOR_BITBOARD.value >> index) & 1
+        is_black = (self.COLOR_BITBOARD.value >> self.index) & 1
         return Color.BLACK if is_black else Color.WHITE
 
     @property    
     def notation(self) -> str:
         return f"{self.FILES[self.file]}{self.RANKS[self.rank]}"
+
+    @property
+    def index(self) -> int:
+        return self.rank * 8 + self.file
 
     @classmethod
     def from_index(cls, index: int):
