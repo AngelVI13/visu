@@ -39,7 +39,7 @@ while True:
         continue
 
     elif "print" in user_input:
-        if game_state.current_state == States.PLAY
+        if game_state.current_state == States.PLAY:
             print(game_state.board)
         else:
             print("Nothing to display. Start a new game or type quit to exit.")

@@ -12,7 +12,7 @@ class States(Enum):
 
 
 class GameState:
-    QUESTIONS_PER_LEVEL = 1
+    QUESTIONS_PER_LEVEL = 5
     MAX_LEVEL = 5
     # for every level add the corresponding piece to the board
     LEVELS = {
